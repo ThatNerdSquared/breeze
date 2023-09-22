@@ -62,30 +62,21 @@ class Breeze extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: Row(children: [
+      body: Column(children: [
         Expanded(
-          flex: 1,
-          child: Column(children: [
-            const Expanded(
-              flex: 1,
-              child: NewTaskForm(),
-            ),
-            const Spacer(),
-            IconButton.filled(
-                onPressed: () => {}, icon: const Icon(Icons.calendar_month))
-          ]),
-        ),
-        const VerticalDivider(),
-        Expanded(
-            flex: 2,
+            flex: 8,
             child: Padding(
               padding: const EdgeInsets.all(PretConfig.defaultElementSpacing),
               child: ListView.builder(
                 scrollDirection: Axis.vertical,
                 itemBuilder: (BuildContext context, int index) {
                   return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(humanizeDate(index)),
+                      const Padding(
+                          padding: EdgeInsets.only(
+                              bottom: PretConfig.minElementSpacing)),
                       Column(
                           children: ref
                               .watch(taskListProvider.select(
@@ -104,6 +95,10 @@ class Breeze extends ConsumerWidget {
                 },
               ),
             )),
+        const Expanded(
+          flex: 1,
+          child: NewTaskForm(),
+        ),
       ]),
     );
     // floatingActionButton: FloatingActionButton(

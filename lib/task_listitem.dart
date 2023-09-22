@@ -16,18 +16,23 @@ class TaskListItem extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Row(
-        children: [
-          TaskStatusButton(
-              status: task.status,
-              statusRotateHandler: (status) => ref
-                  .read(taskListProvider.notifier)
-                  .updateTaskStatus(id, status)),
-          const Padding(
-              padding:
-                  EdgeInsets.only(right: PretConfig.defaultElementSpacing)),
-          Text(task.title),
-        ],
+  Widget build(BuildContext context, WidgetRef ref) => Container(
+        decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+        padding: const EdgeInsets.all(PretConfig.thinElementSpacing),
+        margin: const EdgeInsets.only(bottom: PretConfig.minElementSpacing),
+        child: Row(
+          children: [
+            TaskStatusButton(
+                status: task.status,
+                statusRotateHandler: (status) => ref
+                    .read(taskListProvider.notifier)
+                    .updateTaskStatus(id, status)),
+            const Padding(
+                padding:
+                    EdgeInsets.only(right: PretConfig.defaultElementSpacing)),
+            Text(task.title),
+          ],
+        ),
       );
 }
 

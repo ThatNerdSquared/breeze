@@ -1,5 +1,6 @@
 import 'package:breeze/new_task_form.dart';
 import 'package:breeze/task_data.dart';
+import 'package:breeze/task_listitem.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pret_a_porter/pret_a_porter.dart';
@@ -13,8 +14,14 @@ final taskListProvider = StateNotifierProvider<TaskData, Map<String, Task>>(
   (ref) => TaskData(),
 );
 
+extension DateOnlyCompare on DateTime {
+  bool isSameDate(DateTime other) {
+    return day == other.day && month == other.month && year == other.year;
+  }
+}
+
 void main() {
-  runApp(const MainApp());
+  runApp(const ProviderScope(child: MainApp()));
 }
 
 class MainApp extends StatelessWidget {
@@ -33,12 +40,12 @@ class MainApp extends StatelessWidget {
   }
 }
 
-class Breeze extends StatelessWidget {
+class Breeze extends ConsumerWidget {
   const Breeze({super.key});
 
   String padDate(int datePart) => datePart.toString().padLeft(2, '0');
 
-  String getDateFormatted(int offset) {
+  String humanizeDate(int offset) {
     switch (offset) {
       case 0:
         return 'Today';
@@ -53,11 +60,11 @@ class Breeze extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: Row(children: [
         Expanded(
-          flex: 2,
+          flex: 1,
           child: Column(children: [
             const Expanded(
               flex: 1,
@@ -68,58 +75,41 @@ class Breeze extends StatelessWidget {
                 onPressed: () => {}, icon: const Icon(Icons.calendar_month))
           ]),
         ),
+        const VerticalDivider(),
         Expanded(
-          flex: 4,
-          child: Padding(
-            padding: const EdgeInsets.all(PretConfig.defaultElementSpacing),
-            child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (BuildContext context, int index) => Column(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: PretCard(
-                              padding: PretConfig.thinElementSpacing,
-                              child: Text(getDateFormatted(index))),
-                        ),
-                        Expanded(
-                            flex: 6,
-                            child: PretCard(
-                              child: SizedBox(
-                                  width: 150,
-                                  child: Column(children: [
-                                    Expanded(
-                                      flex: 10,
-                                      child: ListView.builder(
-                                          itemBuilder: (context, index) =>
-                                              const Text('test')),
-                                    )
-                                  ])),
-                            )),
-                        Expanded(
-                            flex: 6,
-                            child: PretCard(
-                              child: SizedBox(
-                                  width: 150,
-                                  child: Column(children: [
-                                    Expanded(
-                                      flex: 10,
-                                      child: ListView.builder(
-                                          itemBuilder: (context, index) =>
-                                              const Text('test')),
-                                    )
-                                  ])),
-                            )),
-                      ],
-                    )),
-          ),
-        )
+            flex: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(PretConfig.defaultElementSpacing),
+              child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
+                    children: [
+                      Text(humanizeDate(index)),
+                      Column(
+                          children: ref
+                              .watch(taskListProvider.select(
+                                (tasklist) => tasklist.entries.where(
+                                  (taskEntry) => taskEntry.value.datetime
+                                      .isSameDate(DateTime.now()
+                                          .add(Duration(days: index))),
+                                ),
+                              ))
+                              .map((mapEntry) => TaskListItem(
+                                  id: mapEntry.key, task: mapEntry.value))
+                              .toList()),
+                      const Divider()
+                    ],
+                  );
+                },
+              ),
+            )),
       ]),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: showAdaptiveDialog(builder: ),
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ),
     );
+    // floatingActionButton: FloatingActionButton(
+    //   onPressed: showAdaptiveDialog(builder: ),
+    //   tooltip: 'Increment',
+    //   child: const Icon(Icons.add),
+    // ),
   }
 }

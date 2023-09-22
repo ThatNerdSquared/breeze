@@ -24,7 +24,10 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
             Expanded(
               flex: 2,
               child: TextFormField(
-                validator: (value) => value != null || value!.isEmpty
+                onChanged: (value) => setState(() {
+                  taskName = value;
+                }),
+                validator: (value) => value == null || value.isEmpty
                     ? 'Please enter a task name'
                     : null,
               ),

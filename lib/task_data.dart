@@ -2,7 +2,7 @@ import 'package:breeze/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-enum TaskStatuses { todo, wip, done }
+enum TaskStatus { todo, wip, done }
 
 class TaskData extends StateNotifier<Map<String, Task>> {
   TaskData({
@@ -19,19 +19,33 @@ class TaskData extends StateNotifier<Map<String, Task>> {
       uuID.v4(): task,
     };
   }
+
+  void updateTaskStatus(String id, TaskStatus status) {
+    state = state.map((key, value) {
+      if (key == id) {
+        return MapEntry(
+            key,
+            Task(
+              title: value.title,
+              datetime: value.datetime,
+              status: status,
+            ));
+      } else {
+        return MapEntry(key, value);
+      }
+    });
+  }
 }
 
 @immutable
 class Task {
   final String title;
-  final TaskStatuses status;
+  final TaskStatus status;
   final DateTime datetime;
-  final int track;
 
   const Task({
     required this.title,
-    this.status = TaskStatuses.todo,
+    this.status = TaskStatus.todo,
     required this.datetime,
-    this.track = 0,
   });
 }

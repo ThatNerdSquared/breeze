@@ -33,6 +33,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   pret_a_porter:
     path: ../pret_a_porter
+  flutter_riverpod: ^2.4.0
+  uuid: ^4.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

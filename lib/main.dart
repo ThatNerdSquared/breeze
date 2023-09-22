@@ -1,7 +1,17 @@
+import 'package:breeze/new_task_form.dart';
+import 'package:breeze/task_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pret_a_porter/pret_a_porter.dart';
+import 'package:uuid/uuid.dart';
 
 import 'config.dart';
+
+const uuID = Uuid();
+
+final taskListProvider = StateNotifierProvider<TaskData, Map<String, Task>>(
+  (ref) => TaskData(),
+);
 
 void main() {
   runApp(const MainApp());
@@ -47,16 +57,19 @@ class Breeze extends StatelessWidget {
     return Scaffold(
       body: Row(children: [
         Expanded(
-          flex: 1,
-          child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton.filled(
-                    onPressed: () => {}, icon: const Icon(Icons.calendar_month))
-              ]),
+          flex: 2,
+          child: Column(children: [
+            const Expanded(
+              flex: 1,
+              child: NewTaskForm(),
+            ),
+            const Spacer(),
+            IconButton.filled(
+                onPressed: () => {}, icon: const Icon(Icons.calendar_month))
+          ]),
         ),
         Expanded(
-          flex: 10,
+          flex: 4,
           child: Padding(
             padding: const EdgeInsets.all(PretConfig.defaultElementSpacing),
             child: ListView.builder(
@@ -73,7 +86,7 @@ class Breeze extends StatelessWidget {
                             flex: 6,
                             child: PretCard(
                               child: SizedBox(
-                                  width: 200,
+                                  width: 150,
                                   child: Column(children: [
                                     Expanded(
                                       flex: 10,
@@ -87,7 +100,7 @@ class Breeze extends StatelessWidget {
                             flex: 6,
                             child: PretCard(
                               child: SizedBox(
-                                  width: 200,
+                                  width: 150,
                                   child: Column(children: [
                                     Expanded(
                                       flex: 10,
@@ -102,11 +115,11 @@ class Breeze extends StatelessWidget {
           ),
         )
       ]),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => {},
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: showAdaptiveDialog(builder: ),
+      //   tooltip: 'Increment',
+      //   child: const Icon(Icons.add),
+      // ),
     );
   }
 }

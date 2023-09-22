@@ -32,7 +32,8 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
+        fontFamily: 'iA Writer Quattro',
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
       ),
       home: const Breeze(),
@@ -62,15 +63,39 @@ class Breeze extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: Column(children: [
+        body: Padding(
+      padding: const EdgeInsets.all(PretConfig.defaultElementSpacing),
+      child: Column(children: [
         Expanded(
-            flex: 8,
-            child: Padding(
-              padding: const EdgeInsets.all(PretConfig.defaultElementSpacing),
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemBuilder: (BuildContext context, int index) {
-                  return Column(
+          flex: 8,
+          child: ListView.builder(
+            scrollDirection: Axis.vertical,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      top: BorderSide(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+                      left: BorderSide(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+                      right: BorderSide(
+                        color: Colors.black,
+                        width: 2.0,
+                      ),
+                      bottom: BorderSide.none,
+                    ),
+                  ),
+                  padding: const EdgeInsets.only(
+                    top: PretConfig.thinElementSpacing,
+                    bottom: PretConfig.thinElementSpacing,
+                    left: PretConfig.defaultElementSpacing,
+                    right: PretConfig.defaultElementSpacing,
+                  ),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(humanizeDate(index)),
@@ -78,33 +103,27 @@ class Breeze extends ConsumerWidget {
                           padding: EdgeInsets.only(
                               bottom: PretConfig.minElementSpacing)),
                       Column(
-                          children: ref
-                              .watch(taskListProvider.select(
-                                (tasklist) => tasklist.entries.where(
-                                  (taskEntry) => taskEntry.value.datetime
-                                      .isSameDate(DateTime.now()
-                                          .add(Duration(days: index))),
-                                ),
-                              ))
-                              .map((mapEntry) => TaskListItem(
-                                  id: mapEntry.key, task: mapEntry.value))
-                              .toList()),
-                      const Divider()
+                        children: ref
+                            .watch(taskListProvider.select(
+                              (tasklist) => tasklist.entries.where(
+                                (taskEntry) => taskEntry.value.datetime
+                                    .isSameDate(DateTime.now()
+                                        .add(Duration(days: index))),
+                              ),
+                            ))
+                            .map((mapEntry) => TaskListItem(
+                                id: mapEntry.key, task: mapEntry.value))
+                            .toList(),
+                      )
                     ],
-                  );
-                },
-              ),
-            )),
-        const Expanded(
-          flex: 1,
-          child: NewTaskForm(),
+                  ));
+            },
+          ),
         ),
+        const Padding(
+            padding: EdgeInsets.only(bottom: PretConfig.defaultElementSpacing)),
+        const NewTaskForm(),
       ]),
-    );
-    // floatingActionButton: FloatingActionButton(
-    //   onPressed: showAdaptiveDialog(builder: ),
-    //   tooltip: 'Increment',
-    //   child: const Icon(Icons.add),
-    // ),
+    ));
   }
 }

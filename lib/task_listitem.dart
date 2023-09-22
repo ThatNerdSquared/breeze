@@ -17,7 +17,12 @@ class TaskListItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => Container(
-        decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: Colors.black,
+            width: 2.0,
+          ),
+        ),
         padding: const EdgeInsets.all(PretConfig.thinElementSpacing),
         margin: const EdgeInsets.only(bottom: PretConfig.minElementSpacing),
         child: Row(
@@ -70,6 +75,13 @@ class TaskStatusButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton(
       style: ButtonStyle(
+          padding: const MaterialStatePropertyAll(
+            EdgeInsets.all(PretConfig.minElementSpacing),
+          ),
+          side: const MaterialStatePropertyAll(BorderSide(
+            color: Colors.black,
+            width: 1.0,
+          )),
           shape: MaterialStatePropertyAll(statusButtonBorder(status))),
       onPressed: () => statusRotateHandler(rotateStatus(status)),
       child: Text(switch (status) {

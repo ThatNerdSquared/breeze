@@ -36,54 +36,75 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
   Widget build(BuildContext context) {
     return Form(
         key: _formKey,
-        child: Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: TaskStatusButton(
-                status: status,
-                statusRotateHandler: (s) => setState(() {
-                  status = s;
-                }),
+        child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black,
+                width: 2.0,
               ),
             ),
-            Expanded(
-              flex: 3,
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  contentPadding: EdgeInsets.all(PretConfig.minElementSpacing),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.zero),
-                  hintText: 'Start a new entry...',
+            padding: const EdgeInsets.only(
+              top: PretConfig.thinElementSpacing,
+              bottom: PretConfig.thinElementSpacing,
+              left: PretConfig.defaultElementSpacing,
+              right: PretConfig.defaultElementSpacing,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: TaskStatusButton(
+                    status: status,
+                    statusRotateHandler: (s) => setState(() {
+                      status = s;
+                    }),
+                  ),
                 ),
-                onChanged: (value) => setState(() {
-                  taskName = value;
-                }),
-                validator: (value) => value == null || value.isEmpty
-                    ? 'Please enter a task name'
-                    : null,
-              ),
-            ),
-            Expanded(
-                flex: 1,
-                child: IconButton.outlined(
-                    style: IconButton.styleFrom(
-                        shape: const BeveledRectangleBorder()),
-                    onPressed: handleDatePicker,
-                    icon: const Icon(Icons.calendar_month_outlined))),
-            Expanded(
-              flex: 1,
-              child: IconButton.outlined(
-                  style: IconButton.styleFrom(
-                      shape: const BeveledRectangleBorder()),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      ref.read(taskListProvider.notifier).addTask(Task(
-                          title: taskName, datetime: dateTime, status: status));
-                    }
-                  },
-                  icon: const Icon(Icons.add)),
-            ),
-          ],
-        ));
+                Expanded(
+                  flex: 3,
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      isDense: true,
+                      contentPadding:
+                          EdgeInsets.all(PretConfig.thinElementSpacing),
+                      border:
+                          OutlineInputBorder(borderRadius: BorderRadius.zero),
+                      hintText: 'What\'s on your plate?',
+                    ),
+                    onChanged: (value) => setState(() {
+                      taskName = value;
+                    }),
+                    validator: (value) => value == null || value.isEmpty
+                        ? 'Please enter a task name'
+                        : null,
+                  ),
+                ),
+                Expanded(
+                    flex: 1,
+                    child: IconButton.outlined(
+                        style: IconButton.styleFrom(
+                          padding: const EdgeInsets.all(
+                              PretConfig.minElementSpacing),
+                          shape: const BeveledRectangleBorder(),
+                        ),
+                        onPressed: handleDatePicker,
+                        icon: const Icon(Icons.calendar_month_outlined))),
+                Expanded(
+                  flex: 1,
+                  child: IconButton.outlined(
+                      style: IconButton.styleFrom(
+                          shape: const BeveledRectangleBorder()),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          ref.read(taskListProvider.notifier).addTask(Task(
+                              title: taskName,
+                              datetime: dateTime,
+                              status: status));
+                        }
+                      },
+                      icon: const Icon(Icons.add)),
+                ),
+              ],
+            )));
   }
 }

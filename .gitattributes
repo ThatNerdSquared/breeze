@@ -1,0 +1,4 @@
+# when your flutter project has more cpp than dart in it
+linux/* linguist-generated
+windows/* linguist-generated
+android/* linguist-generated

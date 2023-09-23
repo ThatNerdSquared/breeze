@@ -35,6 +35,12 @@ class TaskData extends StateNotifier<Map<String, Task>> {
       }
     });
   }
+
+  void deleteTask(String id) {
+    state = Map.fromEntries(
+      state.entries.where((mapEntry) => mapEntry.key != id),
+    );
+  }
 }
 
 @immutable

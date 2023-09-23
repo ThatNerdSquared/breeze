@@ -1,3 +1,4 @@
+import 'package:breeze/date_utils.dart';
 import 'package:breeze/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,36 +9,52 @@ import 'task_data.dart';
 class TaskListItem extends ConsumerWidget {
   final String id;
   final Task task;
+  final bool isPrevious;
 
   const TaskListItem({
     super.key,
     required this.id,
     required this.task,
+    required this.isPrevious,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.black,
-            width: 2.0,
+  Widget build(BuildContext context, WidgetRef ref) => Row(
+        children: [
+          TaskStatusButton(
+              status: task.status,
+              statusRotateHandler: (status) => ref
+                  .read(taskListProvider.notifier)
+                  .updateTaskStatus(id, status)),
+          const Padding(
+            padding: EdgeInsets.only(right: PretConfig.defaultElementSpacing),
           ),
-        ),
-        padding: const EdgeInsets.all(PretConfig.thinElementSpacing),
-        margin: const EdgeInsets.only(bottom: PretConfig.minElementSpacing),
-        child: Row(
-          children: [
-            TaskStatusButton(
-                status: task.status,
-                statusRotateHandler: (status) => ref
-                    .read(taskListProvider.notifier)
-                    .updateTaskStatus(id, status)),
-            const Padding(
-                padding:
-                    EdgeInsets.only(right: PretConfig.defaultElementSpacing)),
-            Text(task.title),
-          ],
-        ),
+          Expanded(
+            child: SelectableText(
+              isPrevious
+                  ? '${task.title} (${humanizeDate(dt: task.datetime)})'
+                  : task.title,
+              style: TextStyle(
+                color: task.status == TaskStatus.done ? Colors.grey : null,
+                fontStyle:
+                    task.status == TaskStatus.done ? FontStyle.italic : null,
+              ),
+            ),
+          ),
+          IconButton.filledTonal(
+            style: const ButtonStyle(
+                backgroundColor: MaterialStatePropertyAll(Colors.transparent),
+                shape: MaterialStatePropertyAll(LinearBorder(
+                  side: BorderSide(
+                    color: Colors.black,
+                    width: 2.0,
+                  ),
+                )),
+                splashFactory: NoSplash.splashFactory),
+            onPressed: () => ref.read(taskListProvider.notifier).deleteTask(id),
+            icon: const Icon(Icons.delete_outline),
+          )
+        ],
       );
 }
 
@@ -71,6 +88,12 @@ class TaskStatusButton extends StatelessWidget {
           ),
       };
 
+  Color colorFromStatus(TaskStatus status) => switch (status) {
+        TaskStatus.todo => Colors.black,
+        TaskStatus.wip => Colors.pink[300]!,
+        TaskStatus.done => Colors.grey,
+      };
+
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
@@ -78,17 +101,24 @@ class TaskStatusButton extends StatelessWidget {
           padding: const MaterialStatePropertyAll(
             EdgeInsets.all(PretConfig.minElementSpacing),
           ),
-          side: const MaterialStatePropertyAll(BorderSide(
-            color: Colors.black,
+          overlayColor: const MaterialStatePropertyAll(Colors.white54),
+          side: MaterialStatePropertyAll(BorderSide(
+            color: colorFromStatus(status),
             width: 1.0,
           )),
           shape: MaterialStatePropertyAll(statusButtonBorder(status))),
       onPressed: () => statusRotateHandler(rotateStatus(status)),
-      child: Text(switch (status) {
-        TaskStatus.todo => "todo",
-        TaskStatus.wip => "wip",
-        TaskStatus.done => "done",
-      }),
+      child: Text(
+        switch (status) {
+          TaskStatus.todo => "todo",
+          TaskStatus.wip => "wip",
+          TaskStatus.done => "done",
+        },
+        style: TextStyle(
+          color: colorFromStatus(status),
+          fontStyle: status == TaskStatus.done ? FontStyle.italic : null,
+        ),
+      ),
     );
   }
 }

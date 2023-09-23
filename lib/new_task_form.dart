@@ -14,6 +14,7 @@ class NewTaskForm extends ConsumerStatefulWidget {
 
 class NewTaskFormState extends ConsumerState<NewTaskForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _taskNameController = TextEditingController();
   String taskName = '';
   TaskStatus status = TaskStatus.todo;
   DateTime dateTime = DateTime.now();
@@ -63,10 +64,11 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
                 Expanded(
                   flex: 3,
                   child: TextFormField(
+                    controller: _taskNameController,
                     decoration: const InputDecoration(
                       isDense: true,
                       contentPadding:
-                          EdgeInsets.all(PretConfig.thinElementSpacing),
+                          EdgeInsets.all(PretConfig.defaultElementSpacing),
                       border:
                           OutlineInputBorder(borderRadius: BorderRadius.zero),
                       hintText: 'What\'s on your plate?',
@@ -84,7 +86,8 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
                     child: IconButton.outlined(
                         style: IconButton.styleFrom(
                           padding: const EdgeInsets.all(
-                              PretConfig.minElementSpacing),
+                            PretConfig.minElementSpacing,
+                          ),
                           shape: const BeveledRectangleBorder(),
                         ),
                         onPressed: handleDatePicker,
@@ -100,6 +103,7 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
                               title: taskName,
                               datetime: dateTime,
                               status: status));
+                          _taskNameController.clear();
                         }
                       },
                       icon: const Icon(Icons.add)),

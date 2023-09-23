@@ -37,6 +37,7 @@ dependencies:
   uuid: ^4.0.0
   path: ^1.8.3
   path_provider: ^2.1.1
+  flutter_launcher_icons: ^0.13.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -97,3 +98,15 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+flutter_launcher_icons:
+  image_path: "assets/breeze-icon.png"
+  android: true
+  ios: true
+  image_path_ios: "assets/breeze-icon-ios.png"
+  web:
+    generate: true
+  windows:
+    generate: true
+  macos:
+    generate: true

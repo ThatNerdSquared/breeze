@@ -50,7 +50,12 @@ class Breeze extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
         body: Padding(
-      padding: const EdgeInsets.all(PretConfig.defaultElementSpacing),
+      padding: const EdgeInsets.only(
+        top: PretConfig.titleBarSafeArea,
+        left: PretConfig.defaultElementSpacing,
+        right: PretConfig.defaultElementSpacing,
+        bottom: PretConfig.defaultElementSpacing,
+      ),
       child: Column(children: [
         Expanded(
           flex: 8,

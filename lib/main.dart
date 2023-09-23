@@ -7,16 +7,20 @@ import 'package:breeze/task_data.dart';
 import 'package:breeze/task_listitem.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pret_a_porter/pret_a_porter.dart';
 import 'package:uuid/uuid.dart';
 
 const uuID = Uuid();
+String platformAppSupportDir = '';
 
 final taskListProvider = StateNotifierProvider<TaskData, Map<String, Task>>(
   (ref) => TaskData(),
 );
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  platformAppSupportDir = (await getApplicationDocumentsDirectory()).path;
   runApp(const ProviderScope(child: MainApp()));
 }
 

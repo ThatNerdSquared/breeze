@@ -109,11 +109,7 @@ class TaskStatusButton extends StatelessWidget {
           shape: MaterialStatePropertyAll(statusButtonBorder(status))),
       onPressed: () => statusRotateHandler(rotateStatus(status)),
       child: Text(
-        switch (status) {
-          TaskStatus.todo => "todo",
-          TaskStatus.wip => "wip",
-          TaskStatus.done => "done",
-        },
+        statusToString(status),
         style: TextStyle(
           color: colorFromStatus(status),
           fontStyle: status == TaskStatus.done ? FontStyle.italic : null,

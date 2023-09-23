@@ -3,6 +3,7 @@ import 'package:breeze/main.dart';
 import 'package:breeze/task_data.dart';
 import 'package:breeze/task_listitem.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pret_a_porter/pret_a_porter.dart';
 
@@ -22,7 +23,7 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
 
   final _defaultBorder = const OutlineInputBorder(
     borderRadius: BorderRadius.zero,
-    borderSide: BorderSide(width: 1.5),
+    borderSide: BorderSide(width: 2.0),
   );
 
   void handleDatePicker() async {
@@ -31,6 +32,15 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
       setState(() {
         dateTime = newDate;
       });
+    }
+  }
+
+  void handleSubmitTask() {
+    if (_formKey.currentState!.validate()) {
+      ref
+          .read(taskListProvider.notifier)
+          .addTask(Task(title: taskName, datetime: dateTime, status: status));
+      _taskNameController.clear();
     }
   }
 
@@ -68,29 +78,37 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
                 ),
                 Expanded(
                   flex: 6,
-                  child: TextFormField(
-                    controller: _taskNameController,
-                    decoration: InputDecoration(
-                        isDense: true,
-                        contentPadding: const EdgeInsets.all(
-                            PretConfig.thinElementSpacing + 1),
-                        border: _defaultBorder,
-                        hintText: 'What\'s on your plate?',
-                        enabledBorder: _defaultBorder,
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.zero,
-                          borderSide: BorderSide(
-                            color: Colors.pink[300]!,
-                            width: 1.5,
-                          ),
-                        )),
-                    cursorColor: Colors.pink[300],
-                    onChanged: (value) => setState(() {
-                      taskName = value;
-                    }),
-                    validator: (value) => value == null || value.isEmpty
-                        ? 'Please enter a task name'
-                        : null,
+                  child: CallbackShortcuts(
+                    bindings: <ShortcutActivator, VoidCallback>{
+                      const SingleActivator(
+                        LogicalKeyboardKey.enter,
+                        meta: true,
+                      ): handleSubmitTask
+                    },
+                    child: TextFormField(
+                      controller: _taskNameController,
+                      decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: const EdgeInsets.all(
+                              PretConfig.thinElementSpacing + 1),
+                          border: _defaultBorder,
+                          hintText: 'What\'s on your plate?',
+                          enabledBorder: _defaultBorder,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.zero,
+                            borderSide: BorderSide(
+                              color: Colors.pink[300]!,
+                              width: 1.5,
+                            ),
+                          )),
+                      cursorColor: Colors.pink[300],
+                      onChanged: (value) => setState(() {
+                        taskName = value;
+                      }),
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please enter a task name'
+                          : null,
+                    ),
                   ),
                 ),
                 const Padding(
@@ -124,15 +142,7 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
                         padding: const EdgeInsets.all(0),
                         shape: const BeveledRectangleBorder(),
                       ),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          ref.read(taskListProvider.notifier).addTask(Task(
-                              title: taskName,
-                              datetime: dateTime,
-                              status: status));
-                          _taskNameController.clear();
-                        }
-                      },
+                      onPressed: handleSubmitTask,
                       icon: const Icon(Icons.add)),
                 ),
               ],

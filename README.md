@@ -19,7 +19,7 @@ _I personally use Breeze alongside my calendar, which I use for timeblocking and
 
 ### Build from Source
 
-Prebuilt app packages are not yet supported. Please build from source. The Flutter SDK is required to build Peregrine.
+Prebuilt app packages are not yet supported. Please build from source. The Flutter SDK is required to build Breeze.
 
 ```bash
 git clone git@github.com:ThatNerdSquared/breeze.git

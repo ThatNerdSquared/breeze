@@ -19,6 +19,11 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
   TaskStatus status = TaskStatus.todo;
   DateTime dateTime = DateTime.now();
 
+  final _defaultBorder = const OutlineInputBorder(
+    borderRadius: BorderRadius.zero,
+    borderSide: BorderSide(width: 1.5),
+  );
+
   void handleDatePicker() async {
     final newDate = await showDatePicker(
       context: context,
@@ -51,6 +56,7 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
               right: PretConfig.defaultElementSpacing,
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   flex: 1,
@@ -61,18 +67,28 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
                     }),
                   ),
                 ),
+                const Padding(
+                  padding: EdgeInsets.only(right: PretConfig.minElementSpacing),
+                ),
                 Expanded(
-                  flex: 3,
+                  flex: 6,
                   child: TextFormField(
                     controller: _taskNameController,
-                    decoration: const InputDecoration(
-                      isDense: true,
-                      contentPadding:
-                          EdgeInsets.all(PretConfig.defaultElementSpacing),
-                      border:
-                          OutlineInputBorder(borderRadius: BorderRadius.zero),
-                      hintText: 'What\'s on your plate?',
-                    ),
+                    decoration: InputDecoration(
+                        isDense: true,
+                        contentPadding: const EdgeInsets.all(
+                            PretConfig.thinElementSpacing + 1),
+                        border: _defaultBorder,
+                        hintText: 'What\'s on your plate?',
+                        enabledBorder: _defaultBorder,
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.zero,
+                          borderSide: BorderSide(
+                            color: Colors.pink[300]!,
+                            width: 1.5,
+                          ),
+                        )),
+                    cursorColor: Colors.pink[300],
                     onChanged: (value) => setState(() {
                       taskName = value;
                     }),
@@ -81,22 +97,37 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
                         : null,
                   ),
                 ),
+                const Padding(
+                  padding: EdgeInsets.only(right: PretConfig.minElementSpacing),
+                ),
                 Expanded(
                     flex: 1,
                     child: IconButton.outlined(
+                        constraints:
+                            const BoxConstraints(maxHeight: 32, minHeight: 32),
                         style: IconButton.styleFrom(
                           padding: const EdgeInsets.all(
                             PretConfig.minElementSpacing,
                           ),
-                          shape: const BeveledRectangleBorder(),
+                          side: const BorderSide(color: Colors.black),
+                          shape: const BeveledRectangleBorder(
+                              side: BorderSide(color: Colors.black)),
                         ),
                         onPressed: handleDatePicker,
                         icon: const Icon(Icons.calendar_month_outlined))),
+                const Padding(
+                  padding: EdgeInsets.only(right: PretConfig.minElementSpacing),
+                ),
                 Expanded(
                   flex: 1,
                   child: IconButton.outlined(
+                      constraints:
+                          const BoxConstraints(maxHeight: 32, minHeight: 32),
                       style: IconButton.styleFrom(
-                          shape: const BeveledRectangleBorder()),
+                        side: const BorderSide(color: Colors.black),
+                        padding: const EdgeInsets.all(0),
+                        shape: const BeveledRectangleBorder(),
+                      ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           ref.read(taskListProvider.notifier).addTask(Task(

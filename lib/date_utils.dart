@@ -1,4 +1,5 @@
 import 'package:breeze/config.dart';
+import 'package:flutter/material.dart';
 
 bool isSameDate(DateTime d1, DateTime d2) {
   return d1.day == d2.day && d1.month == d2.month && d1.year == d2.year;
@@ -36,3 +37,10 @@ bool isDateBeforeToday(DateTime dt) {
   final date = DateTime(dt.year, dt.month, dt.day);
   return date.isBefore(DateTime(now.year, now.month, now.day));
 }
+
+Future<DateTime?> popDatePicker(context) async => await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now().subtract(const Duration(days: 365 * 5)),
+      lastDate: DateTime.now().add(const Duration(days: 365 * 5)),
+    );

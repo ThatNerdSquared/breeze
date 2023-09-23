@@ -58,6 +58,23 @@ class TaskData extends StateNotifier<Map<String, Task>> {
     _writeTasks();
   }
 
+  void updateTaskDate(String id, DateTime newDate) {
+    state = state.map((key, value) {
+      if (key == id) {
+        return MapEntry(
+            key,
+            Task(
+              title: value.title,
+              datetime: newDate,
+              status: value.status,
+            ));
+      } else {
+        return MapEntry(key, value);
+      }
+    });
+    _writeTasks();
+  }
+
   void deleteTask(String id) {
     state = Map.fromEntries(
       state.entries.where((mapEntry) => mapEntry.key != id),

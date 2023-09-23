@@ -1,3 +1,4 @@
+import 'package:breeze/date_utils.dart';
 import 'package:breeze/main.dart';
 import 'package:breeze/task_data.dart';
 import 'package:breeze/task_listitem.dart';
@@ -25,12 +26,7 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
   );
 
   void handleDatePicker() async {
-    final newDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now().subtract(const Duration(days: 365 * 5)),
-      lastDate: DateTime.now().add(const Duration(days: 365 * 5)),
-    );
+    final newDate = await popDatePicker(context);
     if (newDate != null) {
       setState(() {
         dateTime = newDate;

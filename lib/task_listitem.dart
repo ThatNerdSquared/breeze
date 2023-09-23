@@ -41,19 +41,21 @@ class TaskListItem extends ConsumerWidget {
               ),
             ),
           ),
-          IconButton.filledTonal(
-            style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Colors.transparent),
-                shape: MaterialStatePropertyAll(LinearBorder(
-                  side: BorderSide(
-                    color: Colors.black,
-                    width: 2.0,
-                  ),
-                )),
-                splashFactory: NoSplash.splashFactory),
-            onPressed: () => ref.read(taskListProvider.notifier).deleteTask(id),
+          TaskItemButton(
+            icon: const Icon(Icons.calendar_today),
+            onPressed: () async {
+              final newDate = await popDatePicker(context);
+              newDate != null
+                  ? ref
+                      .read(taskListProvider.notifier)
+                      .updateTaskDate(id, newDate)
+                  : null;
+            },
+          ),
+          TaskItemButton(
             icon: const Icon(Icons.delete_outline),
-          )
+            onPressed: () => ref.read(taskListProvider.notifier).deleteTask(id),
+          ),
         ],
       );
 }
@@ -117,4 +119,30 @@ class TaskStatusButton extends StatelessWidget {
       ),
     );
   }
+}
+
+class TaskItemButton extends StatelessWidget {
+  final Icon icon;
+  final VoidCallback onPressed;
+
+  const TaskItemButton({
+    super.key,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) => IconButton.filledTonal(
+        style: const ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(Colors.transparent),
+            shape: MaterialStatePropertyAll(LinearBorder(
+              side: BorderSide(
+                color: Colors.black,
+                width: 2.0,
+              ),
+            )),
+            splashFactory: NoSplash.splashFactory),
+        onPressed: onPressed,
+        icon: icon,
+      );
 }

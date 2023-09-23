@@ -49,13 +49,15 @@ class Breeze extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-        body: Padding(
+        body: Center(
+            child: Container(
       padding: const EdgeInsets.only(
         top: PretConfig.titleBarSafeArea,
         left: PretConfig.defaultElementSpacing,
         right: PretConfig.defaultElementSpacing,
         bottom: PretConfig.defaultElementSpacing,
       ),
+      constraints: const BoxConstraints(maxWidth: 800),
       child: Column(children: [
         Expanded(
           flex: 8,
@@ -105,6 +107,6 @@ class Breeze extends ConsumerWidget {
             padding: EdgeInsets.only(bottom: PretConfig.defaultElementSpacing)),
         const NewTaskForm(),
       ]),
-    ));
+    )));
   }
 }

@@ -1,8 +1,10 @@
 import 'package:breeze/date_utils.dart';
 import 'package:breeze/main.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pret_a_porter/pret_a_porter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'task_data.dart';
 
@@ -30,8 +32,8 @@ class TaskListItem extends ConsumerWidget {
             padding: EdgeInsets.only(right: PretConfig.defaultElementSpacing),
           ),
           Expanded(
-            child: SelectableText(
-              isPrevious
+            child: SelectableLinkify(
+              text: isPrevious
                   ? '${task.title} (${humanizeDate(dt: task.datetime)})'
                   : task.title,
               style: TextStyle(
@@ -39,6 +41,14 @@ class TaskListItem extends ConsumerWidget {
                 fontStyle:
                     task.status == TaskStatus.done ? FontStyle.italic : null,
               ),
+              onOpen: (link) async {
+                final url = [')', ']'].contains(link.url[link.url.length - 1])
+                    ? link.url.substring(0, link.url.length - 1)
+                    : link.url;
+                if (!await launchUrl(Uri.parse(url))) {
+                  throw Exception('Could not launch ${link.url}');
+                }
+              },
             ),
           ),
           TaskItemButton(

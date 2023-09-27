@@ -5,6 +5,7 @@ import 'package:breeze/list_section.dart';
 import 'package:breeze/new_task_form.dart';
 import 'package:breeze/task_data.dart';
 import 'package:breeze/task_listitem.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
@@ -43,11 +44,18 @@ class MainApp extends StatelessWidget {
   }
 }
 
-class Breeze extends ConsumerWidget {
+class Breeze extends ConsumerStatefulWidget {
   const Breeze({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  BreezeState createState() => BreezeState();
+}
+
+class BreezeState extends ConsumerState<Breeze> {
+  var _showCompleted = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
         body: Center(
             child: Container(
@@ -66,13 +74,33 @@ class Breeze extends ConsumerWidget {
             itemBuilder: (BuildContext context, int index) {
               return index == 0
                   ? ListSection(
-                      header: const Text('Previous'),
+                      header: Text.rich(
+                        TextSpan(children: [
+                          const TextSpan(text: 'Previous ('),
+                          TextSpan(
+                              text: _showCompleted
+                                  ? "hide completed"
+                                  : "show completed",
+                              style: TextStyle(
+                                color: Colors.pink[300],
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () => setState(() {
+                                      _showCompleted = !_showCompleted;
+                                    })),
+                          const TextSpan(text: ")")
+                        ]),
+                      ),
                       children: ref
                           .watch(taskListProvider.select(
-                            (tasklist) => tasklist.entries
-                                .where((taskEntry) => isDateBeforeToday(
-                                      taskEntry.value.datetime,
-                                    )),
+                            (tasklist) => tasklist.entries.where((taskEntry) =>
+                                isDateBeforeToday(
+                                  taskEntry.value.datetime,
+                                ) &&
+                                (!_showCompleted
+                                    ? taskEntry.value.status != TaskStatus.done
+                                    : true)),
                           ))
                           .map((mapEntry) => TaskListItem(
                                 id: mapEntry.key,

@@ -108,23 +108,26 @@ class TaskStatusButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
-      style: ButtonStyle(
-          padding: const MaterialStatePropertyAll(
-            EdgeInsets.all(PretConfig.minElementSpacing),
-          ),
-          overlayColor: const MaterialStatePropertyAll(Colors.white54),
-          side: MaterialStatePropertyAll(BorderSide(
+    return SizedBox(
+      width: 56,
+      child: OutlinedButton(
+        style: ButtonStyle(
+            padding: const MaterialStatePropertyAll(
+              EdgeInsets.all(PretConfig.minElementSpacing),
+            ),
+            overlayColor: const MaterialStatePropertyAll(Colors.white54),
+            side: MaterialStatePropertyAll(BorderSide(
+              color: colorFromStatus(status),
+              width: 1.0,
+            )),
+            shape: MaterialStatePropertyAll(statusButtonBorder(status))),
+        onPressed: () => statusRotateHandler(rotateStatus(status)),
+        child: Text(
+          statusToString(status),
+          style: TextStyle(
             color: colorFromStatus(status),
-            width: 1.0,
-          )),
-          shape: MaterialStatePropertyAll(statusButtonBorder(status))),
-      onPressed: () => statusRotateHandler(rotateStatus(status)),
-      child: Text(
-        statusToString(status),
-        style: TextStyle(
-          color: colorFromStatus(status),
-          fontStyle: status == TaskStatus.done ? FontStyle.italic : null,
+            fontStyle: status == TaskStatus.done ? FontStyle.italic : null,
+          ),
         ),
       ),
     );

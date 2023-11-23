@@ -3,7 +3,6 @@ import 'package:path/path.dart' as p;
 
 class Config {
   Config._();
-  static const currentSchemaVersion = '1.0.0';
 
   static String get dataFilePath {
     return p.join(

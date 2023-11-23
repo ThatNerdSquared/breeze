@@ -8,21 +8,9 @@ class JsonBackend extends PretJsonManager {
   @override
   File dataFile = File(Config.dataFilePath);
   @override
-  final freshJson = <String, dynamic>{
-    'schema': Config.currentSchemaVersion,
-    'tasks': {}
-  };
-
-  void writeTasksToJson(Map<String, Task> tasks) {
-    jsonWriteWrapper((initialData) {
-      final mappifiedTasks = tasks.map((key, value) => MapEntry(
-            key,
-            value.toJson(),
-          ));
-      initialData['tasks'] = mappifiedTasks;
-      return initialData;
-    });
-  }
+  String schemaVersion = '1.0.0';
+  @override
+  Map get freshJson => <String, dynamic>{'schema': schemaVersion, 'tasks': {}};
 
   Map<String, Task> readTasksFromJson() {
     final contentsMap = pretLoadJson()['tasks'];

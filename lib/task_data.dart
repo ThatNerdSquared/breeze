@@ -1,7 +1,7 @@
 import 'package:breeze/json_backend.dart';
 import 'package:breeze/main.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pret_a_porter/pret_a_porter.dart';
 
 enum TaskStatus { todo, wip, done }
 
@@ -30,7 +30,7 @@ class TaskData extends StateNotifier<Map<String, Task>> {
   }
 
   void _writeTasks() {
-    JsonBackend().writeTasksToJson(state);
+    JsonBackend().writeDataToJson(state, 'tasks');
   }
 
   void addTask(Task task) {
@@ -83,18 +83,18 @@ class TaskData extends StateNotifier<Map<String, Task>> {
   }
 }
 
-@immutable
-class Task {
+class Task extends PretDataclass {
   final String title;
   final TaskStatus status;
   final DateTime datetime;
 
-  const Task({
+  Task({
     required this.title,
     this.status = TaskStatus.todo,
     required this.datetime,
   });
 
+  @override
   Map<String, dynamic> toJson() {
     return {
       'title': title,

@@ -10,6 +10,8 @@ class JsonBackend extends PretJsonManager {
   @override
   String schemaVersion = '1.0.0';
   @override
+  Map<String, List<String>> dropFields = {};
+  @override
   Map get freshJson => <String, dynamic>{'schema': schemaVersion, 'tasks': {}};
 
   Map<String, Task> readTasksFromJson() {

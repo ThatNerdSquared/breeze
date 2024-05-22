@@ -1,16 +1,15 @@
 import 'dart:core';
 
-import 'package:breeze/date_utils.dart';
-import 'package:breeze/list_section.dart';
-import 'package:breeze/new_task_form.dart';
+import 'package:breeze/project_data.dart';
+import 'package:breeze/sidebar.dart';
 import 'package:breeze/task_data.dart';
-import 'package:breeze/task_listitem.dart';
-import 'package:flutter/gestures.dart';
+import 'package:breeze/views/schedule_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pret_a_porter/pret_a_porter.dart';
 import 'package:uuid/uuid.dart';
+
+import 'views/project_view.dart';
 
 const uuID = Uuid();
 String platformAppSupportDir = '';
@@ -18,6 +17,12 @@ String platformAppSupportDir = '';
 final taskListProvider = StateNotifierProvider<TaskData, Map<String, Task>>(
   (ref) => TaskData(),
 );
+final projectListProvider =
+    StateNotifierProvider<ProjectData, Map<String, Project>>(
+  (ref) => ProjectData(),
+);
+final showCompleted = StateProvider<bool>((ref) => false);
+final currentProject = StateProvider<String>((ref) => 'Inbox');
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,89 +57,34 @@ class Breeze extends ConsumerStatefulWidget {
 }
 
 class BreezeState extends ConsumerState<Breeze> {
-  var _showCompleted = false;
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-            child: Container(
-      padding: const EdgeInsets.only(
-        top: PretConfig.titleBarSafeArea,
-        left: PretConfig.defaultElementSpacing,
-        right: PretConfig.defaultElementSpacing,
-        bottom: PretConfig.defaultElementSpacing,
-      ),
-      constraints: const BoxConstraints(maxWidth: 800),
-      child: Column(children: [
-        Expanded(
-          flex: 8,
-          child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemBuilder: (BuildContext context, int index) {
-              return index == 0
-                  ? ListSection(
-                      header: Text.rich(
-                        TextSpan(children: [
-                          const TextSpan(text: 'Previous ('),
-                          TextSpan(
-                              text: _showCompleted
-                                  ? "hide completed"
-                                  : "show completed",
-                              style: TextStyle(
-                                color: Colors.pink[300],
-                                decoration: TextDecoration.underline,
-                              ),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () => setState(() {
-                                      _showCompleted = !_showCompleted;
-                                    })),
-                          const TextSpan(text: ")")
-                        ]),
-                      ),
-                      children: ref
-                          .watch(taskListProvider.select(
-                            (tasklist) => tasklist.entries.where((taskEntry) =>
-                                isDateBeforeToday(
-                                  taskEntry.value.datetime,
-                                ) &&
-                                (!_showCompleted
-                                    ? taskEntry.value.status != TaskStatus.done
-                                    : true)),
-                          ))
-                          .map((mapEntry) => TaskListItem(
-                                id: mapEntry.key,
-                                task: mapEntry.value,
-                                isPrevious: true,
-                              ))
-                          .toList(),
-                    )
-                  : ListSection(
-                      header: Text(humanizeDate(offset: index - 1)),
-                      children: ref
-                          .watch(taskListProvider.select(
-                            (tasklist) => tasklist.entries.where(
-                              (taskEntry) => isSameDate(
-                                  taskEntry.value.datetime,
-                                  DateTime.now().add(
-                                    Duration(days: index - 1),
-                                  )),
-                            ),
-                          ))
-                          .map((mapEntry) => TaskListItem(
-                                id: mapEntry.key,
-                                task: mapEntry.value,
-                                isPrevious: false,
-                              ))
-                          .toList(),
-                    );
-            },
+    final projects = ref.watch(projectListProvider);
+    return Scaffold(body: Center(child: LayoutBuilder(
+      builder: (context, constraints) {
+        return Row(children: [
+          Expanded(
+            flex: 3,
+            child: SizedBox(
+              height: constraints.maxHeight,
+              child: const Sidebar(),
+            ),
           ),
-        ),
-        const Padding(
-            padding: EdgeInsets.only(bottom: PretConfig.defaultElementSpacing)),
-        const NewTaskForm(),
-      ]),
+          Expanded(
+            flex: 5,
+            child: SizedBox(
+              height: constraints.maxHeight,
+              child: ProjectView(
+                project: projects[ref.watch(currentProject)]!,
+              ),
+            ),
+          ),
+          const Expanded(
+            flex: 5,
+            child: ScheduleView(),
+          )
+        ]);
+      },
     )));
   }
 }

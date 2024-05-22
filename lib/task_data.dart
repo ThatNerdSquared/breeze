@@ -1,5 +1,4 @@
 import 'package:breeze/json_backend.dart';
-import 'package:breeze/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pret_a_porter/pret_a_porter.dart';
 
@@ -33,10 +32,10 @@ class TaskData extends StateNotifier<Map<String, Task>> {
     JsonBackend().writeDataToJson(state, 'tasks');
   }
 
-  void addTask(Task task) {
+  void addTask(Task task, String newTaskID) {
     state = {
       ...state,
-      uuID.v4(): task,
+      newTaskID: task,
     };
     _writeTasks();
   }
@@ -50,6 +49,7 @@ class TaskData extends StateNotifier<Map<String, Task>> {
               title: value.title,
               datetime: value.datetime,
               status: status,
+              project: value.project,
             ));
       } else {
         return MapEntry(key, value);
@@ -67,6 +67,7 @@ class TaskData extends StateNotifier<Map<String, Task>> {
               title: value.title,
               datetime: newDate,
               status: value.status,
+              project: value.project,
             ));
       } else {
         return MapEntry(key, value);
@@ -87,11 +88,13 @@ class Task extends PretDataclass {
   final String title;
   final TaskStatus status;
   final DateTime datetime;
+  final String project;
 
   Task({
     required this.title,
     this.status = TaskStatus.todo,
     required this.datetime,
+    required this.project,
   });
 
   @override
@@ -100,6 +103,7 @@ class Task extends PretDataclass {
       'title': title,
       'datetime': datetime.toIso8601String(),
       'status': statusToString(status),
+      'project': project
     };
   }
 }

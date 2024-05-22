@@ -37,9 +37,18 @@ class NewTaskFormState extends ConsumerState<NewTaskForm> {
 
   void handleSubmitTask() {
     if (_formKey.currentState!.validate()) {
+      final newTaskID = uuID.v4();
+      ref.read(taskListProvider.notifier).addTask(
+          Task(
+            title: taskName,
+            datetime: dateTime,
+            status: status,
+            project: 'Inbox',
+          ),
+          newTaskID);
       ref
-          .read(taskListProvider.notifier)
-          .addTask(Task(title: taskName, datetime: dateTime, status: status));
+          .read(projectListProvider.notifier)
+          .addTaskToProject(newTaskID, 'Inbox');
       _taskNameController.clear();
     }
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pret_a_porter/pret_a_porter.dart';
+import 'package:super_context_menu/super_context_menu.dart' as scm;
 import 'package:url_launcher/url_launcher.dart';
 
 import 'task_data.dart';
@@ -21,7 +22,26 @@ class TaskListItem extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Row(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final projects = ref.watch(projectListProvider);
+    return scm.ContextMenuWidget(
+      menuProvider: (_) => scm.Menu(children: [
+        scm.Menu(
+            title: 'Move to...',
+            children: projects.keys
+                .map((projectID) => scm.MenuAction(
+                    title: projects[projectID]!.title,
+                    callback: () {
+                      ref
+                          .read(projectListProvider.notifier)
+                          .deleteTaskFromProject(id, task.project);
+                      ref
+                          .read(projectListProvider.notifier)
+                          .addTaskToProject(id, projectID);
+                    }))
+                .toList()),
+      ]),
+      child: Row(
         children: [
           TaskStatusButton(
               status: task.status,
@@ -64,10 +84,17 @@ class TaskListItem extends ConsumerWidget {
           ),
           TaskItemButton(
             icon: const Icon(Icons.delete_outline),
-            onPressed: () => ref.read(taskListProvider.notifier).deleteTask(id),
+            onPressed: () {
+              ref
+                  .read(projectListProvider.notifier)
+                  .deleteTaskFromProject(id, task.project);
+              ref.read(taskListProvider.notifier).deleteTask(id);
+            },
           ),
         ],
-      );
+      ),
+    );
+  }
 }
 
 class TaskStatusButton extends StatelessWidget {

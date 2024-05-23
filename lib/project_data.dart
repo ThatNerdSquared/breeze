@@ -53,6 +53,20 @@ class ProjectData extends StateNotifier<Map<String, Project>> {
     );
     _writeProjects();
   }
+
+  void deleteTaskFromProject(String taskID, String projectID) {
+    state = state.map(
+      (k, v) => MapEntry(
+          k,
+          k == projectID
+              ? Project(
+                  title: v.title,
+                  taskIDs: v.taskIDs.where((id) => id != taskID).toList(),
+                )
+              : v),
+    );
+    _writeProjects();
+  }
 }
 
 class Project extends PretDataclass {
